@@ -25,6 +25,12 @@ class Vote
      */
     private $total_value;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="vote")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $user;
+
 
     public function getPageSlug(): ?string
     {
@@ -58,6 +64,18 @@ class Vote
     public function setTotalValue(int $total_value): self
     {
         $this->total_value = $total_value;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }

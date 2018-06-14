@@ -1,0 +1,22 @@
+<div>
+    {% set value = vote.total_value %}
+    {% set number_vote = vote.total_votes %}
+    {% set rating_width = ((value/number_vote)|number_format(2))*rating_unitwidth %}
+    {% set rating1 = ((value/number_vote)|number_format(2)) %}
+    {% set rating2 = ((value/number_vote)|number_format(1)) %}
+   <div class="ratingblock">
+       <div id="unit_long{{ vote.id }}">
+            <ul id="unit_ul'.$pageSlug.'" class="unit-rating" style="width:'{% rating_unitwidth *units %}'px;">
+                <li class="current-rating" style="width:'{{ rating_width }}'px;">Currently {{ rating2 }}/{{ units }}'</li>
+
+                {% for ncount in 1..units  %}
+                // loop from 1 to the number of units
+                    <li><a href="/vote/{{ vote.id }}"</a></li>';
+                {% endfor %}
+
+            </ul>
+            <p class="voted"><strong>{{ rating1 }}</strong>/'..' ({{ number_vote }} vote)';
+            </p>
+       </div>
+   </div>
+</div>

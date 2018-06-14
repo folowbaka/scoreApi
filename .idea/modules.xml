@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/vote.iml" filepath="$PROJECT_DIR$/vote.iml" />
+      <module fileurl="file://$PROJECT_DIR$/scoreApi.iml" filepath="$PROJECT_DIR$/scoreApi.iml" />
     </modules>
   </component>
 </project>

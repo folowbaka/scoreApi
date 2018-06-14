@@ -12,8 +12,11 @@ use FOS\RestBundle\View\View;
 use FOS\RestBundle\View\ViewHandler;
 use JMS\Serializer\SerializationContext;
 use Symfony\Bundle\FrameworkBundle\Templating\TemplateReference;
+use FOS\RestBundle\Context\Context;
+use FOS\RestBundle\Controller\FOSRestController;
 
-class VoteController extends Controller
+
+class VoteController extends FOSRestController
 {
     /**
      * @Get("/vote/{slug}", name="get_vote")
@@ -23,10 +26,10 @@ class VoteController extends Controller
         $vote = $this->getDoctrine()
             ->getRepository(\App\Entity\Vote::class)
             ->find($slug);
-        $view = $this->view($vote, 200)
-            ->setTemplate("rating-bar")
-            ->setTemplateVar('vote');
-        return $this->handleView($view);
+        $view = View::create()
+            ->setData(array('vote' => $vote,'rating_unitwidth'=>30,"units"=>5))
+            ->setTemplate('rating-bar.html.twig');
+        return $this->getViewHandler()->handle($view);
     }
     /**
      * @put("/vote/{slug}", name="put_vote")
@@ -46,13 +49,10 @@ class VoteController extends Controller
             $entityManager->persist($vote);
             $entityManager->flush();
         }
-        $view = new View();
-        $view->setData($vote);
-        $context = new SerializationContext();
-        $context->setVersion('2.1');
-        $context->setGroups(array('data'));
-        $view->setSerializationContext($context);
-        return $this->viewHandler->handle($view);
+
+        $view = View::create()
+            ->setData(array('vote' => $vote));
+        return $this->getViewHandler()->handle($view);
     }
     /**
      * @post("/vote/{slug}/{scoreValue}", name="post_vote")
