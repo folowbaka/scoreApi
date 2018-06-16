@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -26,10 +28,15 @@ class Vote
     private $total_value;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="vote")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="vote")
      */
-    private $user;
+    private $users;
+    
+    public function __construct()
+    {
+        $this->users = new ArrayCollection();
+    }
+    
 
 
     public function getPageSlug(): ?string
@@ -68,15 +75,42 @@ class Vote
         return $this;
     }
 
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
 
-    public function setUser(?User $user): self
+    public function setUsers(?User $users): self
     {
-        $this->user = $user;
+        $this->users = $users;
 
         return $this;
+    }
+
+    public function addUser(User $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
+            $user->setVote($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): self
+    {
+        if ($this->users->contains($user)) {
+            $this->users->removeElement($user);
+            // set the owning side to null (unless already changed)
+            if ($user->getVote() === $this) {
+                $user->setVote(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|User[]
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
     }
 }

@@ -26,9 +26,14 @@ class VoteController extends FOSRestController
         $vote = $this->getDoctrine()
             ->getRepository(\App\Entity\Vote::class)
             ->find($slug);
+        $numberVote=$vote->getTotalVotes();
+        $numberVoteAlt=$numberVote;
+        if($numberVote==0)
+            $numberVoteAlt=1;
         $view = View::create()
-            ->setData(array('vote' => $vote,'rating_unitwidth'=>30,"units"=>5))
-            ->setTemplate('rating-bar.html.twig');
+            ->setTemplate('rating-bar.html.twig')
+            ->setData(array('vote' => $vote,"rating_unitwidth"=>30,"units"=>5,"numberVote"=>$numberVote,"numberVoteAlt"=>$numberVoteAlt))
+            ->setTemplateData(array('vote' => $vote,"ratingunitwidth"=>30,"units"=>5));
         return $this->getViewHandler()->handle($view);
     }
     /**
@@ -59,9 +64,21 @@ class VoteController extends FOSRestController
      */
     public function postVoteAction($slug,$scoreValue)
     {
-        return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/VoteController.php',
-        ]);
+        $vote = $this->getDoctrine()
+            ->getRepository(\App\Entity\Vote::class)
+            ->find($slug);
+        $vote->setTotalValue($vote->getTotalValue()+$scoreValue);
+        $vote->setTotalVotes($vote->getTotalVotes()+1);
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->flush();
+        $numberVote=$vote->getTotalVotes();
+        $numberVoteAlt=$numberVote;
+        if($numberVote==0)
+            $numberVoteAlt=1;
+        $view = View::create()
+            ->setTemplate('rating-bar.html.twig')
+            ->setData(array('vote' => $vote,"rating_unitwidth"=>30,"units"=>5,"numberVote"=>$numberVote,"numberVoteAlt"=>$numberVoteAlt))
+            ->setTemplateData(array('vote' => $vote,"ratingunitwidth"=>30,"units"=>5));
+        return $this->getViewHandler()->handle($view);
     }
 }
